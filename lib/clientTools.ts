@@ -1,4 +1,5 @@
 import { ClientToolImplementation } from 'ultravox-client';
+import { switchCategory } from './categoryUtils';
 
 // Client-implemented tool for Order Details
 export const updateOrderTool: ClientToolImplementation = (parameters) => {
@@ -28,13 +29,30 @@ export const highlightProductTool: ClientToolImplementation = (parameters) => {
 
   if (typeof window !== "undefined") {
     const event = new CustomEvent("productHighlight", {
-      detail: { 
-        productName: normalizedName, 
-        action 
+      detail: {
+        productName: normalizedName,
+        action
       }
     });
     window.dispatchEvent(event);
   }
 
   return `${action === 'show' ? 'Highlighted' : 'Unhighlighted'} ${normalizedName}`;
+};
+
+// Client-implemented tool for Category Switching
+export const switchCategoryTool: ClientToolImplementation = (parameters) => {
+  const { category, subcategory } = parameters;
+  console.debug(`Switching to category: ${category}${subcategory ? `, subcategory: ${subcategory}` : ''}`);
+
+  // Validate the category
+  const validCategories = ['ecommerce', 'restaurant', 'grocery', 'medical'];
+  if (!validCategories.includes(category.toLowerCase())) {
+    return `Invalid category: ${category}. Valid categories are: ${validCategories.join(', ')}`;
+  }
+
+  // Switch the category using our utility function
+  switchCategory(category.toLowerCase(), subcategory);
+
+  return `Switched to ${category}${subcategory ? ` (${subcategory})` : ''} category`;
 };

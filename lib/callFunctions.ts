@@ -1,7 +1,7 @@
 'use client';
 import { UltravoxSession, UltravoxSessionStatus, Transcript, UltravoxExperimentalMessageEvent, Role } from 'ultravox-client';
 import { JoinUrlResponse, CallConfig } from '@/lib/types';
-import { updateOrderTool, highlightProductTool } from '@/lib/clientTools';
+import { updateOrderTool, highlightProductTool, switchCategoryTool } from '@/lib/clientTools';
 
 let uvSession: UltravoxSession | null = null;
 const debugMessages: Set<string> = new Set(["debug"]);
@@ -18,7 +18,7 @@ export function toggleMute(role: Role): void {
     // Toggle (user) Mic
     if (role == Role.USER) {
       uvSession.isMicMuted ? uvSession.unmuteMic() : uvSession.muteMic();
-    } 
+    }
     // Mute (agent) Speaker
     else {
       uvSession.isSpeakerMuted ? uvSession.unmuteSpeaker() : uvSession.muteSpeaker();
@@ -52,7 +52,7 @@ async function createCall(callConfig: CallConfig, showDebugMessages?: boolean): 
     if(showDebugMessages) {
       console.log(`Call created. Join URL: ${data.joinUrl}`);
     }
-    
+
     return data;
   } catch (error) {
     console.error('Error creating call:', error);
@@ -82,6 +82,7 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     // Register our tools
     uvSession.registerToolImplementation("updateOrder", updateOrderTool);
     uvSession.registerToolImplementation("highlightProduct", highlightProductTool);
+    uvSession.registerToolImplementation("switchCategory", switchCategoryTool);
 
     if(showDebugMessages) {
       console.log('uvSession created:', uvSession);
