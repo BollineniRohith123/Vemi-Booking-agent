@@ -132,14 +132,15 @@ export interface DemoConfig {
   callConfig: CallConfig;
 }
 
-// For our order details component
-export interface OrderItem {
-  name: string;
-  quantity: number;
-  specialInstructions?: string;
-  price: number;
+// For our vehicle inquiry component
+export interface VehicleInquiry {
+  vehicleName: string;
+  applicationRequirement?: string;
+  inquiryType: 'specifications' | 'pricing' | 'test_drive' | 'brochure';
+  businessRequirements?: string;
 }
-export interface OrderDetailsData {
-  items: OrderItem[];
-  totalAmount: number;
+
+export interface VehicleInquiryData {
+  inquiries: VehicleInquiry[];
+  totalInquiries: number;
 }

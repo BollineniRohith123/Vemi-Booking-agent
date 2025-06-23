@@ -389,32 +389,31 @@ const ProductDisplay: React.FC = () => {
                   <div className="flex space-x-1">
                     <span className="text-yellow-400">★★★★</span><span className="text-gray-600">★</span>
                   </div>
-                </div>
-                <button
-                  className="mt-3 w-full bg-gray-800 hover:bg-purple-700 text-gray-300 hover:text-white text-xs py-2 px-3 rounded-lg transition-all border border-gray-700 hover:border-purple-500 flex items-center justify-center group-hover:shadow-lg"
+                </div>                <button
+                  className="mt-3 w-full bg-gray-800 hover:bg-blue-700 text-gray-300 hover:text-white text-xs py-2 px-3 rounded-lg transition-all border border-gray-700 hover:border-blue-500 flex items-center justify-center group-hover:shadow-lg"
                   onClick={() => {
-                    // Dispatch a custom event to add item to cart
-                    const orderItem = {
-                      name: product.name,
-                      quantity: 1,
-                      price: product.price,
-                      specialInstructions: ''
+                    // Dispatch a custom event for vehicle inquiry
+                    const vehicleInquiry = {
+                      vehicleName: product.name,
+                      inquiryType: 'specifications' as const,
+                      applicationRequirement: 'General inquiry',
+                      businessRequirements: 'Product interest from display'
                     };
 
-                    // Create a new event with the current order items
-                    const event = new CustomEvent('orderDetailsUpdated', {
-                      detail: [orderItem]
+                    // Create a new event with the vehicle inquiry
+                    const event = new CustomEvent('vehicleInquiryUpdated', {
+                      detail: [vehicleInquiry]
                     });
                     window.dispatchEvent(event);
 
                     // Show a notification
-                    alert(`Added ${product.name} to cart!`);
+                    alert(`Added ${product.name} to inquiry list!`);
                   }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Add to Cart
+                  Add to Inquiry
                 </button>
               </div>
             </div>

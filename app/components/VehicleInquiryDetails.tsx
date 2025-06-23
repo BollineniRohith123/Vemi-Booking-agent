@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { VehicleInquiryData, VehicleInquiry } from '@/lib/types';
-import VehicleDetails from './VehicleDetails';
-import { vehiclesData } from '@/lib/vehicles.data';
 
 function prepVehicleInquiryDetails(inquiryData: VehicleInquiry[]): VehicleInquiryData {
   try {
@@ -20,12 +18,11 @@ function prepVehicleInquiryDetails(inquiryData: VehicleInquiry[]): VehicleInquir
   }
 }
 
-const OrderDetails: React.FC = () => {
+const VehicleInquiryDetails: React.FC = () => {
   const [inquiryDetails, setInquiryDetails] = useState<VehicleInquiryData>({
     inquiries: [],
     totalInquiries: 0
   });
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleInquiry | null>(null);
 
   useEffect(() => {
     const handleInquiryUpdate = (event: CustomEvent<VehicleInquiry[]>) => {
@@ -53,71 +50,23 @@ const OrderDetails: React.FC = () => {
       setInquiryDetails(processedDetails);
     };
 
-    const handleShowVehicleDetails = (event: CustomEvent<{ vehicleName: string }>) => {
-      const vehicleName = event.detail.vehicleName;
-      const inquiry = inquiryDetails.inquiries.find(i => i.vehicleName === vehicleName);
-      if (inquiry) {
-        setSelectedVehicle(inquiry);
-      } else {
-        const vehicleData = vehiclesData.find(v => v.name === vehicleName);
-        if (vehicleData) {
-          setSelectedVehicle({
-            vehicleName: vehicleData.name,
-            inquiryType: 'specifications', // Default inquiry type
-          });
-        }
-      }
-    };
-
     const handleCallEnded = () => {
       // Clear inquiries when call ends
       setInquiryDetails({
         inquiries: [],
         totalInquiries: 0
       });
-      setSelectedVehicle(null);
     };
 
     // Listen for vehicle inquiry updates
     window.addEventListener('vehicleInquiryUpdated', handleInquiryUpdate as EventListener);
-    window.addEventListener('showVehicleDetails', handleShowVehicleDetails as EventListener);
     window.addEventListener('callEnded', handleCallEnded);
 
     return () => {
       window.removeEventListener('vehicleInquiryUpdated', handleInquiryUpdate as EventListener);
-      window.removeEventListener('showVehicleDetails', handleShowVehicleDetails as EventListener);
       window.removeEventListener('callEnded', handleCallEnded);
     };
   }, [inquiryDetails.inquiries]);
-
-  const handleVehicleSelect = (inquiry: VehicleInquiry) => {
-    setSelectedVehicle(inquiry);
-  };
-
-  const handleBackToList = () => {
-    setSelectedVehicle(null);
-  };
-
-  if (selectedVehicle) {
-    const vehicleData = vehiclesData.find(v => v.name === selectedVehicle.vehicleName);
-    if (vehicleData) {
-      return (
-        <VehicleDetails
-          vehicle={vehicleData}
-          onBack={handleBackToList}
-        />
-      );
-    }
-    return (
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 text-white">
-        <h3 className="text-lg font-semibold mb-4">Error</h3>
-        <p className="text-slate-400 mb-4">Vehicle details could not be found for: {selectedVehicle.vehicleName}</p>
-        <button onClick={handleBackToList} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          Back to Inquiry List
-        </button>
-      </div>
-    );
-  }
 
   if (inquiryDetails.totalInquiries === 0) {
     return (
@@ -136,11 +85,7 @@ const OrderDetails: React.FC = () => {
   }
 
   const formatInquiryItem = (inquiry: VehicleInquiry, index: number) => (
-    <div 
-      key={index} 
-      className="bg-slate-800 rounded-lg p-4 border border-slate-600 hover:border-blue-500 transition-colors cursor-pointer"
-      onClick={() => handleVehicleSelect(inquiry)}
-    >
+    <div key={index} className="bg-slate-800 rounded-lg p-4 border border-slate-600 hover:border-blue-500 transition-colors">
       <div className="flex justify-between items-start mb-2">
         <h4 className="text-white font-medium">{inquiry.vehicleName}</h4>
         <span className={`px-2 py-1 text-xs rounded-full font-medium ${
@@ -204,4 +149,4 @@ const OrderDetails: React.FC = () => {
   );
 };
 
-export default OrderDetails;
+export default VehicleInquiryDetails;

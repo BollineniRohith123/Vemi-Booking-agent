@@ -1,7 +1,7 @@
 'use client';
 import { UltravoxSession, UltravoxSessionStatus, Transcript, UltravoxExperimentalMessageEvent, Role } from 'ultravox-client';
 import { JoinUrlResponse, CallConfig } from '@/lib/types';
-import { updateOrderTool, highlightProductTool, switchCategoryTool } from '@/lib/clientTools';
+import { updateInquiryTool, highlightVehicleTool, switchCategoryTool } from '@/lib/clientTools';
 
 let uvSession: UltravoxSession | null = null;
 const debugMessages: Set<string> = new Set(["debug"]);
@@ -68,20 +68,28 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     if (!joinUrl) {
       console.error('Join URL is required');
       return;
+    }    console.log('Joining call:', joinUrl);    // Start up our Ultravox Session with experimental messages config
+    uvSession = new UltravoxSession({
+      experimentalMessages: debugMessages
+    });
+      // Set up event listeners using the proper event names
+    uvSession.addEventListener('status', (status: any) => {
+      callbacks.onStatusChange(status);
+    });
+    
+    uvSession.addEventListener('transcripts', (transcripts: any) => {
+      callbacks.onTranscriptChange(transcripts);
+    });
+    
+    if (callbacks.onDebugMessage) {
+      uvSession.addEventListener('experimental_message', (message: any) => {
+        callbacks.onDebugMessage?.(message);
+      });
     }
 
-    console.log('Joining call:', joinUrl);
-
-    // Start up our Ultravox Session
-    uvSession = new UltravoxSession({
-      onStatusChange: (status) => callbacks.onStatusChange(status),
-      onTranscriptChange: (transcripts) => callbacks.onTranscriptChange(transcripts),
-      onDebugMessage: (msg) => callbacks.onDebugMessage?.(msg)
-    });
-
-    // Register our tools
-    uvSession.registerToolImplementation("updateOrder", updateOrderTool);
-    uvSession.registerToolImplementation("highlightProduct", highlightProductTool);
+    // Register our tools for commercial vehicles
+    uvSession.registerToolImplementation("updateInquiry", updateInquiryTool);
+    uvSession.registerToolImplementation("highlightVehicle", highlightVehicleTool);
     uvSession.registerToolImplementation("switchCategory", switchCategoryTool);
 
     if(showDebugMessages) {

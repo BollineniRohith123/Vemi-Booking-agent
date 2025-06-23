@@ -1,98 +1,88 @@
-// Utility functions for handling category switching
+// Utility functions for handling vehicle category switching
 
 /**
  * Maps subcategory names to their internal representation
  * This helps handle cases where the AI might use different terms than our internal types
  */
 const subcategoryMap: Record<string, Record<string, string>> = {
-  ecommerce: {
-    'electronics': 'electronics',
-    'electronic': 'electronics',
-    'devices': 'electronics',
-    'gadgets': 'electronics',
-    'tech': 'electronics',
-    'technology': 'electronics',
+  trucks: {
+    'lcv': 'lcv',
+    'light': 'lcv',
+    'light commercial': 'lcv',
+    'small': 'lcv',
+    'ace': 'lcv',
+    'ultra': 'lcv',
 
-    'clothing': 'clothing',
-    'clothes': 'clothing',
-    'fashion': 'clothing',
-    'apparel': 'clothing',
-    'wear': 'clothing',
+    'mcv': 'mcv',
+    'medium': 'mcv',
+    'medium commercial': 'mcv',
+    'lpt': 'mcv',
 
-    'home': 'home',
-    'home goods': 'home',
-    'homegoods': 'home',
-    'home items': 'home',
-    'furniture': 'home',
-    'decor': 'home',
-    'decoration': 'home',
-    'household': 'home'
+    'hcv': 'hcv',
+    'heavy': 'hcv',
+    'heavy commercial': 'hcv',
+    'prima': 'hcv',
+    'signa': 'hcv',
+
+    'mav': 'mav',
+    'multi-axle': 'mav',
+    'multi axle': 'mav'
   },
-  restaurant: {
-    'donut': 'donut',
-    'donuts': 'donut',
-    'doughnut': 'donut',
-    'doughnuts': 'donut',
-    'pastry': 'donut',
-    'pastries': 'donut',
+  buses: {
+    'city': 'city',
+    'city bus': 'city',
+    'urban': 'city',
+    'starbus': 'city',
 
-    'drink': 'drink',
-    'drinks': 'drink',
-    'beverage': 'drink',
-    'beverages': 'drink',
-    'coffee': 'drink',
+    'school': 'school',
+    'school bus': 'school',
+    'student': 'school',
 
-    'main': 'main',
-    'main dish': 'main',
-    'main dishes': 'main',
-    'food': 'main',
-    'meal': 'main',
-    'meals': 'main',
-    'sandwich': 'main',
-    'sandwiches': 'main'
+    'luxury': 'luxury',
+    'coach': 'luxury',
+    'intercity': 'luxury',
+    'highway': 'luxury',
+
+    'staff': 'staff',
+    'employee': 'staff',
+    'shuttle': 'staff'
   },
-  grocery: {
-    'produce': 'produce',
-    'fruits': 'produce',
-    'vegetables': 'produce',
-    'fruit': 'produce',
-    'vegetable': 'produce',
-    'fresh': 'produce',
+  construction: {
+    'tippers': 'tippers',
+    'tipper': 'tippers',
+    'dumper': 'tippers',
+    'dump truck': 'tippers',
 
-    'dairy': 'dairy',
-    'milk': 'dairy',
-    'cheese': 'dairy',
-    'yogurt': 'dairy',
-    'eggs': 'dairy',
+    'mixers': 'mixers',
+    'mixer': 'mixers',
+    'concrete': 'mixers',
+    'transit mixer': 'mixers',
 
-    'bakery': 'bakery',
-    'bread': 'bakery',
-    'baked': 'bakery',
-    'baked goods': 'bakery',
-    'pastry': 'bakery',
-    'pastries': 'bakery'
+    'cranes': 'cranes',
+    'crane': 'cranes',
+    'lifting': 'cranes',
+
+    'specialized': 'specialized',
+    'special': 'specialized',
+    'custom': 'specialized'
   },
-  medical: {
-    'medications': 'medications',
-    'medication': 'medications',
-    'medicine': 'medications',
-    'medicines': 'medications',
-    'drugs': 'medications',
-    'drug': 'medications',
-    'pharmacy': 'medications',
+  specialty: {
+    'fire': 'fire',
+    'firefighting': 'fire',
+    'fire fighting': 'fire',
+    'emergency': 'fire',
 
-    'equipment': 'equipment',
-    'devices': 'equipment',
-    'device': 'equipment',
-    'monitor': 'equipment',
-    'monitors': 'equipment',
+    'ambulance': 'ambulance',
+    'medical': 'ambulance',
+    'health': 'ambulance',
 
-    'firstaid': 'firstaid',
-    'first aid': 'firstaid',
-    'first-aid': 'firstaid',
-    'bandages': 'firstaid',
-    'bandage': 'firstaid',
-    'kit': 'firstaid'
+    'mobile_workshop': 'mobile_workshop',
+    'workshop': 'mobile_workshop',
+    'service': 'mobile_workshop',
+
+    'defense': 'defense',
+    'military': 'defense',
+    'government': 'defense'
   }
 };
 
@@ -153,24 +143,28 @@ export const getCategoryFromInput = (input: string): { category: string | null; 
   const normalizedInput = input.toLowerCase();
   let category: string | null = null;
   let subcategory: string | null = null;
-
-  // Check for ecommerce-related terms
+  // Check for truck-related terms
   if (
-    normalizedInput.includes('ecommerce') ||
-    normalizedInput.includes('shop') ||
-    normalizedInput.includes('buy') ||
-    normalizedInput.includes('purchase') ||
-    normalizedInput.includes('electronics') ||
-    normalizedInput.includes('clothing') ||
-    normalizedInput.includes('fashion') ||
-    normalizedInput.includes('home goods') ||
-    normalizedInput.includes('furniture') ||
-    normalizedInput.includes('appliance')
+    normalizedInput.includes('truck') ||
+    normalizedInput.includes('trucks') ||
+    normalizedInput.includes('cargo') ||
+    normalizedInput.includes('goods') ||
+    normalizedInput.includes('delivery') ||
+    normalizedInput.includes('logistics') ||
+    normalizedInput.includes('transport') ||
+    normalizedInput.includes('prima') ||
+    normalizedInput.includes('signa') ||
+    normalizedInput.includes('ultra') ||
+    normalizedInput.includes('ace') ||
+    normalizedInput.includes('lpt') ||
+    normalizedInput.includes('lcv') ||
+    normalizedInput.includes('mcv') ||
+    normalizedInput.includes('hcv')
   ) {
-    category = 'ecommerce';
+    category = 'trucks';
 
-    // Check for ecommerce subcategories using our mapping
-    for (const [key, value] of Object.entries(subcategoryMap['ecommerce'])) {
+    // Check for truck subcategories using our mapping
+    for (const [key, value] of Object.entries(subcategoryMap['trucks'])) {
       if (normalizedInput.includes(key)) {
         subcategory = value;
         break;
@@ -178,25 +172,24 @@ export const getCategoryFromInput = (input: string): { category: string | null; 
     }
   }
 
-  // Check for restaurant-related terms
+  // Check for bus-related terms
   if (
-    normalizedInput.includes('restaurant') ||
-    normalizedInput.includes('food') ||
-    normalizedInput.includes('meal') ||
-    normalizedInput.includes('eat') ||
-    normalizedInput.includes('hungry') ||
-    normalizedInput.includes('donut') ||
-    normalizedInput.includes('doughnut') ||
-    normalizedInput.includes('coffee') ||
-    normalizedInput.includes('drink') ||
-    normalizedInput.includes('breakfast') ||
-    normalizedInput.includes('lunch') ||
-    normalizedInput.includes('dinner')
+    normalizedInput.includes('bus') ||
+    normalizedInput.includes('buses') ||
+    normalizedInput.includes('passenger') ||
+    normalizedInput.includes('passengers') ||
+    normalizedInput.includes('city bus') ||
+    normalizedInput.includes('school bus') ||
+    normalizedInput.includes('staff') ||
+    normalizedInput.includes('employee') ||
+    normalizedInput.includes('starbus') ||
+    normalizedInput.includes('coach') ||
+    normalizedInput.includes('luxury')
   ) {
-    category = 'restaurant';
+    category = 'buses';
 
-    // Check for restaurant subcategories using our mapping
-    for (const [key, value] of Object.entries(subcategoryMap['restaurant'])) {
+    // Check for bus subcategories using our mapping
+    for (const [key, value] of Object.entries(subcategoryMap['buses'])) {
       if (normalizedInput.includes(key)) {
         subcategory = value;
         break;
@@ -204,23 +197,25 @@ export const getCategoryFromInput = (input: string): { category: string | null; 
     }
   }
 
-  // Check for grocery-related terms
+  // Check for construction-related terms
   if (
-    normalizedInput.includes('grocery') ||
-    normalizedInput.includes('groceries') ||
-    normalizedInput.includes('produce') ||
-    normalizedInput.includes('fruit') ||
-    normalizedInput.includes('vegetable') ||
-    normalizedInput.includes('dairy') ||
-    normalizedInput.includes('milk') ||
-    normalizedInput.includes('bread') ||
-    normalizedInput.includes('bakery') ||
-    normalizedInput.includes('meat')
+    normalizedInput.includes('construction') ||
+    normalizedInput.includes('tipper') ||
+    normalizedInput.includes('tippers') ||
+    normalizedInput.includes('mixer') ||
+    normalizedInput.includes('mixers') ||
+    normalizedInput.includes('crane') ||
+    normalizedInput.includes('cranes') ||
+    normalizedInput.includes('dumper') ||
+    normalizedInput.includes('concrete') ||
+    normalizedInput.includes('building') ||
+    normalizedInput.includes('excavation') ||
+    normalizedInput.includes('mining')
   ) {
-    category = 'grocery';
+    category = 'construction';
 
-    // Check for grocery subcategories using our mapping
-    for (const [key, value] of Object.entries(subcategoryMap['grocery'])) {
+    // Check for construction subcategories using our mapping
+    for (const [key, value] of Object.entries(subcategoryMap['construction'])) {
       if (normalizedInput.includes(key)) {
         subcategory = value;
         break;
@@ -228,24 +223,23 @@ export const getCategoryFromInput = (input: string): { category: string | null; 
     }
   }
 
-  // Check for medical-related terms
+  // Check for specialty vehicle terms
   if (
-    normalizedInput.includes('medical') ||
-    normalizedInput.includes('medicine') ||
-    normalizedInput.includes('health') ||
-    normalizedInput.includes('healthcare') ||
-    normalizedInput.includes('pharmacy') ||
-    normalizedInput.includes('drug') ||
-    normalizedInput.includes('prescription') ||
-    normalizedInput.includes('first aid') ||
-    normalizedInput.includes('bandage') ||
-    normalizedInput.includes('pain') ||
-    normalizedInput.includes('relief')
+    normalizedInput.includes('specialty') ||
+    normalizedInput.includes('special') ||
+    normalizedInput.includes('fire') ||
+    normalizedInput.includes('ambulance') ||
+    normalizedInput.includes('emergency') ||
+    normalizedInput.includes('defense') ||
+    normalizedInput.includes('military') ||
+    normalizedInput.includes('workshop') ||
+    normalizedInput.includes('mobile workshop') ||
+    normalizedInput.includes('service vehicle')
   ) {
-    category = 'medical';
+    category = 'specialty';
 
-    // Check for medical subcategories using our mapping
-    for (const [key, value] of Object.entries(subcategoryMap['medical'])) {
+    // Check for specialty subcategories using our mapping
+    for (const [key, value] of Object.entries(subcategoryMap['specialty'])) {
       if (normalizedInput.includes(key)) {
         subcategory = value;
         break;
